@@ -27,7 +27,7 @@ export default function Home() {
         <h1>CARBON CALC</h1>
       </div>
       <div className={styles.text_container}>
-        Welcome.<br></br>Log in to get going
+        Is that you, admin? Welcome!<br></br>Log in to get going
       </div>
       <div className={styles.content_container}>
         <div className={styles.question_container}>
