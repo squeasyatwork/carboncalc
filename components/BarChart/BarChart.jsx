@@ -105,7 +105,7 @@ export default function BarChart({ electricityValues, gasValues }) {
           ticks: { color: "lightgray", font: { family: "Raleway" } },
           title: {
             display: true,
-            text: "kWh's  of  electricity  used",
+            text: "KGCO₂ of emissions",
             color: "lightgray",
             font: { family: "Raleway", weight: "normal", size: "20" },
           },

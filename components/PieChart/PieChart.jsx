@@ -118,7 +118,7 @@ export default function PieChart(dset) {
 
   return (
     <>
-      <div id="pie_chart_wrapper">
+      <div id="pie_chart_wrapper" style={{alignItems: "center", display: "flex", justifyContent: "center"}}>
         <Pie data={chartData} options={chartOptions} />
       </div>
     </>

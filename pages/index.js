@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import "@app/globals.css";
-import styles from "../app/Home.module.css";
+import styles from "../app/Login.module.css";
 import Router from "next/router";
 
 export default function Home() {

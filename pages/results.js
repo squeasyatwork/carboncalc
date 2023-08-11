@@ -4,7 +4,6 @@ import styles from "../app/Result.module.css";
 import { useRouter } from "next/router";
 import BarChart from "@components/BarChart/BarChart";
 import PieChart from "@components/PieChart/PieChart";
-
 import { PrismaClient } from "@prisma/client";
 
 export const config = {
@@ -32,6 +31,8 @@ export const getServerSideProps = async (context) => {
 
 export default function Result({ dbResponse }) {
   const [data, setData] = useState([]);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showPieChart, setShowPieChart] = useState(true);
 
   const router = useRouter();
   const {
@@ -55,6 +56,7 @@ export default function Result({ dbResponse }) {
     gas,
     postcode,
   };
+
   console.log(
     "GAS VALUE INSIDE BROWSER dbResponse: " +
       (parseInt(dbResponse.gas_usage) * 55.7) / 1000
@@ -68,7 +70,7 @@ export default function Result({ dbResponse }) {
   } = [-1, -1, -1, -1];
 
   let electricity_emissions = 1.35 * parseFloat(electricity);
-  let gas_emissions = (55.7 * parseFloat(gas)) / 1000;
+  let gas_emissions = (55.7 / 1000) * parseFloat(gas);
   energy_emissions = electricity_emissions + gas_emissions;
   // console.log(energy_emissions);
 
@@ -98,72 +100,17 @@ export default function Result({ dbResponse }) {
     diet_emissions,
   ];
 
+  console.log(household_emissions);
+
   const handleRepeat = async () => {
-    router.push("/");
+    router.push("/home");
   };
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.title}>
-        <h1>CARBON CALC</h1>
-      </div>
-      <div className={styles.intro_text_container}>
-        Congratulations on taking the first step towards a more sustainable
-        lifestyle. Your carbon footprint is now unveiled, providing a clear
-        snapshot of your environmental impact.
-      </div>
-      <div className={styles.content_container}>
-        <div className={styles.introduction_text}>
-          <p className={styles.bingo_line}>Result</p>
-          <center>
-            <p className={styles.text}>Your carbon footprint is:</p>
-            <p>{data.result}</p>
-            <p className={styles.highlighted_text}>
-              {parseInt(household_emissions)} kgCO<sub>2</sub>
-            </p>
-          </center>
-        </div>
-      </div>
-      <br></br>
-      <br></br>
-      <div className={styles.chart_container}>
-        <div className={styles.text_container}>
-          Compare your carbon footprint with your neighbours
-        </div>
-        <br></br>
-        <BarChart
-          electricityValues={[
-            parseInt(dbResponse.electricity_usage) * 1.35,
-            parseInt(electricity_emissions),
-            4684 * 1.35,
-          ]}
-          gasValues={[
-            parseInt(dbResponse.gas_usage) * 55.7,
-            parseInt(gas_emissions) * 12,
-            49.8 * 55.7,
-          ]}
-        />
-      </div>
-      <br></br>
-      <div className={styles.chart_container}>
-        <div className={styles.text_container}>
-          Compare the contributors of your own carbon footprint
-        </div>
-        <br></br>
-        <PieChart dset={activitiesArr} />
-      </div>
-      <br></br>
-
-      <div className={styles.outer_text_container}>
-        <div className={styles.text_container}>
-          Tips to reduce your footprint
-        </div>
-        <br></br>
-        <div className={styles.tip_category}>Gas</div>
+  const tipCategories = [
+    {
+      category: "Gas",
+      content: (
         <div className={styles.tip_content}>
-          {parseInt(100 * (gas_emissions / household_emissions))}% of your
-          emissions come from your gas consumption. Here are some tips to reduce
-          the impact of your activities:
           <li>
             If you are able, electrification is one of the most effective ways
             of reducing emissions. This is the process of removing gas
@@ -196,12 +143,13 @@ export default function Result({ dbResponse }) {
             </a>
           </li>
         </div>
-        <br></br>
-
-        <div className={styles.tip_category}>Electricity</div>
+      ),
+      percentage: parseInt(100 * (gas_emissions / household_emissions)),
+    },
+    {
+      category: "Electricity",
+      content: (
         <div className={styles.tip_content}>
-          {parseInt(100 * (electricity_emissions / household_emissions))}% of
-          your emissions come from your electricity consumption.
           <li>
             Switch off lights and electrical appliances when they are not in
             use.
@@ -232,11 +180,13 @@ export default function Result({ dbResponse }) {
             </a>
           </li>
         </div>
-        <br></br>
-        <div className={styles.tip_category}>Diet</div>
+      ),
+      percentage: parseInt(100 * (electricity_emissions / household_emissions)),
+    },
+    {
+      category: "Diet",
+      content: (
         <div className={styles.tip_content}>
-          {parseInt(100 * (diet_emissions / household_emissions))}% of your
-          emissions come from your diet.{" "}
           <li>
             One easy way to reduce your consumption of high impact animal-based
             products is to reduce your portion sizes.
@@ -274,11 +224,13 @@ export default function Result({ dbResponse }) {
             </a>
           </li>
         </div>
-        <br></br>
-        <div className={styles.tip_category}>Transport</div>
+      ),
+      percentage: parseInt(100 * (diet_emissions / household_emissions)),
+    },
+    {
+      category: "Transport",
+      content: (
         <div className={styles.tip_content}>
-          {parseInt(100 * (transp_emissions / household_emissions))}% of your
-          emissions come from travel.
           <li>
             The easiest way to reduce emissions from travel is to use public
             transport such as trains, buses, trams and ferries, where possible.
@@ -304,17 +256,19 @@ export default function Result({ dbResponse }) {
             </a>
           </li>
         </div>
-        <br></br>
-        <div className={styles.tip_category}>Recycling</div>
+      ),
+      percentage: parseInt(100 * (transp_emissions / household_emissions)),
+    },
+    {
+      category: "Recycle",
+      content: (
         <div className={styles.tip_content}>
-          {parseInt(-100 * (recycle_emissions / household_emissions))}% of your
-          emissions are cut down by your waste management.{" "}
           <li>
             Recycle where you can, try adding a recycling bin inside to make it
             easier.
           </li>
           <li>
-            Understand what goes into each bin and how to dispose and recycle.
+            Understand what goes into each bin and how to di7spose and recycle.
           </li>
           <li>
             Recycling bin: Food and drink containers should be emptied and
@@ -338,11 +292,122 @@ export default function Result({ dbResponse }) {
             .
           </li>
         </div>
+      ),
+      percentage: parseInt(100 * (recycle_emissions / household_emissions)),
+    },
+  ];
+
+  tipCategories.sort((a, b) => b.percentage - a.percentage);
+
+  // Check for negative values and calculate normalisationFactor factor
+  let positivePercentageSum = 0;
+  for (let tip of tipCategories) {
+    tip.percentage = Math.max(0, tip.percentage);
+    positivePercentageSum += tip.percentage;
+  }
+
+  let scaleFactor = 100 / positivePercentageSum;
+
+  for (let tip of tipCategories) {
+    if (tip.percentage > 0) {
+      tip.displayPercentage = Math.round(tip.percentage * scaleFactor); // Create a new variable for the scaled percentage
+    } else {
+      tip.displayPercentage = 0; // Ensure the display percentage is zero if the original percentage is negative or zero
+    }
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.title}>
+        <h1>CARBON CALC</h1>
       </div>
-      <div className={styles.button_container}>
-        <button className={styles.button} onClick={handleRepeat}>
-          Go back
-        </button>
+      <div className={styles.intro_text_container}>
+        Congratulations on taking the first step towards a more sustainable
+        lifestyle. Your carbon footprint is now unveiled, providing a clear
+        snapshot of your environmental impact.
+      </div>
+      <br></br>
+      <br></br>
+      <div className={styles.chart_container}>
+        <div className={styles.introduction_text}>
+          <p className={styles.bingo_line}>Your carbonfootprint is: </p>
+          <center>
+            <p>{data.result}</p>
+            <p className={styles.highlighted_text}>
+              {parseInt(household_emissions)} kgCO<sub>2</sub>
+            </p>
+          </center>
+        </div>
+        <br></br>
+        <br></br>
+        <br></br>
+        {showPieChart ? (
+          <>
+            <div className={styles.text_container}>
+              Composition of your carbonfootprint
+            </div>
+            <PieChart dset={activitiesArr} />
+            <br></br>
+            <div className={styles.outer_text_container}>
+              <div className={styles.text_container}>
+                Tips to reduce your footprint
+              </div>
+              <br></br>
+              <div className={styles.scroll_container}>
+                <div className={styles.tip_text_container}>
+                  {tipCategories.map((tip, index) => (
+                    <div key={index}>
+                      <div className={styles.tip_category}>
+                        {tip.category} ~ {tip.displayPercentage}%
+                      </div>
+                      {tip.content}
+                      <br />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <br></br>
+              <br></br>
+              <div className={styles.text_container}>
+                Compare your carbon emisions with your neighbours!
+              </div>
+              <p>
+                The below graph displays your monthly emissions by gas and
+                electricity compared to your suburb's and the Victorian average.
+                Your suburb is identified by your postcode.
+              </p>
+              <br></br>
+              <BarChart
+                electricityValues={[
+                  parseInt(dbResponse.electricity_usage) * 1.35,
+                  parseInt(electricity_emissions),
+                  4684 * 1.35,
+                ]}
+                gasValues={[
+                  parseInt(dbResponse.gas_usage) * 55.7,
+                  parseInt(gas_emissions) * 12,
+                  49.8 * 55.7,
+                ]}
+              />
+            </div>
+          </>
+        )}
+        <div className={styles.button_container}>
+          <button
+            className={styles.button}
+            onClick={() => setShowPieChart(!showPieChart)}
+          >
+            See more
+          </button>
+          <button className={styles.button} onClick={handleRepeat}>
+            Go back
+          </button>
+        </div>
       </div>
     </div>
   );
