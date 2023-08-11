@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model emissions {
+  postcode               Int?
+  average_elec_emissions Float?
+  average_gas_emissions  Float?
+  average_emissions      Float?
+
+  @@ignore
+}
+
+model energy_usage {
+  postcode          Int      @id(map: "PK__energy_u__F27E9E8B1E31FC75")
+  electricity_usage Decimal? @db.Decimal(18, 0)
+  gas_usage         Decimal? @db.Decimal(18, 0)
+  emissions_usage   Decimal? @db.Decimal(18, 0)
+  suburb            suburb   @relation(fields: [postcode], references: [postcode], onUpdate: NoAction, map: "FK__energy_us__postc__3D5E1FD2")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model energy_usage_updated {
+  postcode         Int    @id(map: "PK_energy_usage_updated")
+  average_elec_use Float?
+  average_gas_use  Float?
+
+  @@ignore
+}
+
+model suburb {
+  postcode     Int           @id(map: "PK__suburb__F27E9E8B69346CAB")
+  name         String        @db.VarChar(255)
+  energy_usage energy_usage?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model suburb_updated {
+  postcode Int?
+  suburb   String? @db.VarChar(Max)
+  council  String? @db.VarChar(Max)
+
+  @@ignore
+}
