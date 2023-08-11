@@ -331,7 +331,7 @@ export default function Result({ dbResponse }) {
       <br></br>
       <div className={styles.chart_container}>
         <div className={styles.introduction_text}>
-          <p className={styles.bingo_line}>Your carbonfootprint is: </p>
+          <p className={styles.bingo_line}>Your carbon footprint is </p>
           <center>
             <p>{data.result}</p>
             <p className={styles.highlighted_text}>
@@ -390,9 +390,9 @@ export default function Result({ dbResponse }) {
                   (4684 * 1.35) / 12,
                 ]}
                 gasValues={[
-                  parseInt(dbResponse.gas_usage) * 55.7,
-                  parseInt(gas_emissions) * 12,
-                  49.8 * 55.7,
+                  (parseInt(dbResponse.gas_usage) * 55.7) / 12,
+                  (parseInt(gas_emissions) * 12) / 12,
+                  (49.8 * 55.7) / 12,
                 ]}
               />
             </div>
