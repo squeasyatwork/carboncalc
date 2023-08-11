@@ -402,7 +402,7 @@ export default function Result({ dbResponse }) {
             className={styles.button}
             onClick={() => setShowPieChart(!showPieChart)}
           >
-            See more
+            Compare emissions
           </button>
           <button className={styles.button} onClick={handleRepeat}>
             Go back
