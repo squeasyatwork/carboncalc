@@ -33,6 +33,7 @@ export default function Result({ dbResponse }) {
   const [data, setData] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [showPieChart, setShowPieChart] = useState(true);
+  const [buttonValue, setButtonValue] = useState("Compare");
 
   const router = useRouter();
   const {
@@ -400,12 +401,15 @@ export default function Result({ dbResponse }) {
         <div className={styles.button_container}>
           <button
             className={styles.button}
-            onClick={() => setShowPieChart(!showPieChart)}
+            onClick={() => {
+              setShowPieChart(!showPieChart);
+              setButtonValue("Results");
+            }}
           >
-            Compare emissions
+            {buttonValue}
           </button>
           <button className={styles.button} onClick={handleRepeat}>
-            Go back
+            Home
           </button>
         </div>
       </div>
