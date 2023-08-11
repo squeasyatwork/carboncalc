@@ -385,9 +385,9 @@ export default function Result({ dbResponse }) {
               <br></br>
               <BarChart
                 electricityValues={[
-                  parseInt(dbResponse.electricity_usage) * 1.35,
+                  (parseInt(dbResponse.electricity_usage) * 1.35) / 12,
                   parseInt(electricity_emissions),
-                  4684 * 1.35,
+                  (4684 * 1.35) / 12,
                 ]}
                 gasValues={[
                   parseInt(dbResponse.gas_usage) * 55.7,
