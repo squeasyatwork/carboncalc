@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "compilerOptions": {
     "paths": {
@@ -6,12 +5,3 @@
     }
   }
 }
-=======
-{
-  "compilerOptions": {
-    "paths": {
-      "@*": ["./*"]
-    }
-  }
-}
->>>>>>> origin/root
